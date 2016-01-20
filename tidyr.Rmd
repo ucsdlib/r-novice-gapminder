@@ -1,0 +1,105 @@
+---
+title: "tidyr-notes"
+author: "Tim Dennis"
+date: "January 20, 2016"
+output: html_document
+---
+
+Researchers want to manipulate their data from wide to long & visa-versa. 
+
+ - each column is a variable
+ - each row is an observation
+ 
+* Long format you have 1 column for the observed vars and the other columns are ID vars
+* Wide format each row is a site/subject/patient & multople observation varialbes containing the same type of data.
+  * repeated observations over time
+  * observations of multiple variables
+* Data input might be easier in wide format (human readable)
+* R's functions are designed assuming you have data in long format. 
+
+```{r}
+#install.packages('tidyr')
+library(dplyr)
+library(tidyr)
+#str(gapminder)
+```
+
+* gapminder dataset has multiple observed vars 
+* it is in between pure long and wide data format
+  * 3 "ID Variables" (`continent`, `country`, `year`) 
+  * 3 "observation varialbes" (`pop`, `lifeExp`, `gdpPercap`)
+* dispite not having all observation vars in one column, this is ofte preferred b/c the observation vars are in different units.
+
+## wide to long format with gather()
+
+let's load the gap_wide data 
+
+```{r}
+gap_wide <- read.csv('https://goo.gl/4xPTex', header=TRUE, stringsAsFactors = FALSE)
+str(gap_wide)
+gapminder <- read.csv("https://goo.gl/BtBnPg", header = T)
+
+```
+* use gather to gather observations vars into a single variable
+
+
+```{r}
+gap_long <- gap_wide %>% 
+  gather(obstype_year,obs_values,starts_with('pop'),starts_with('lifeExp'),starts_with('gdpPercap'))
+
+str(gap_long)
+
+```
+
+* notice the use of the %>%  syntax as we used in dplyr. 
+* yes you can combine tidyr and dplyr together using %>% 
+* in gather() we name a new col for the new ID var (obstype_year) & the name for the amalgamated observation vars
+* we use 'starts_with' to select all vars that start with that prefix
+* gather also allows a `-` to indentify what vars are not to be gathered (ie ID vars)
+* very useful for datasets with lots of vars
+
+```{r}
+gap_long <- gap_wide %>% gather(obstype_year, obs_values, -continent, -country)
+str(gap_long)
+```
+
+* obstype_year actually contains 2 pieces of information, the observation type (pop,lifeExp, or gdpPercap) and the year
+* use separate()
+
+```{r}
+gap_long <- gap_long %>% separate(obstype_year, into=c('obs_type', 'year'), sep='_')
+gap_long$year <- as.integer(gap_long$year)
+head(gap_long)
+tail(gap_long)
+```
+
+## Long to intermediate
+
+* use opposite of gather() to spread our data out again into intermediate width. 
+* we can then go back to the widest format (what we started with above)
+
+```{r}
+gap_normal <- gap_long %>% spread(obs_type, obs_values)
+dim(gap_normal)
+```
+```{r}
+dim(gapminder)
+names(gap_normal)
+names(gapminder)
+```
+* Now we’ve got an intermediate dataframe gap_normal with the same dimensions as the original gapminder, but the order of the variables is different. 
+* Let’s fix that before checking if they are all.equal().
+
+ 
+```{r}
+gap_normal <- gap_normal[, names(gapminder)]
+all.equal(gap_normal, gapminder)
+head(gap_normal)
+head(gapminder)
+```
+
+```{r}
+gap_normal <- gap_normal %>% arrange(country,continent,year)
+all.equal(gap_normal,gapminder)
+```
+

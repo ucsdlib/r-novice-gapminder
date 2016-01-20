@@ -17,6 +17,8 @@ gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
 > * To be able to use the 6 main dataframe manipulation 'verbs' with pipes in `dplyr`
 >
 
+##This Document: http://goo.gl/aXkvZm
+
 Manipulation of dataframes means many things to many researchers, we often select certain observations (rows) or variables (columns), we often group the data by a certain variable(s), or we even calculate summary statistics. We can do these operations using the normal base R operations:
 
 ```{r eval=FALSE}
@@ -176,39 +178,6 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
               sd_pop=sd(pop))
 ```
 
-
-
-
-
-
-> ## Advanced Challenge {.challenge}
-> Calculate the average life expectancy in 2002 of 2 randomly selected countries for each continent. Then arrange the continent names in reverse order.
-> **Hint:** Use the `dplyr` functions `arrange()` and `sample_n()`, they have similar syntax to other dplyr functions.
->
-
-> ## Solution to Challenge 1 {.challenge}
->```{r}
->year_country_lifeExp_Africa <- gapminder %>%
->                            filter(continent=="Africa") %>%
->                            select(year,country,lifeExp)
-> ```
-
-> ## Solution to Challenge 2 {.challenge}
->```{r}
->lifeExp_bycountry <- gapminder %>%
->    group_by(country) %>%
->    summarize(mean_lifeExp=mean(lifeExp))
->```
-
-> ## Solution to Advanced Challenge {.challenge}
->```{r}
->lifeExp_2countries_bycontinents <- gapminder %>% 
->    filter(year==2002) %>%
->    group_by(continent) %>%
->    sample_n(2) %>%
->    summarize(mean_lifeExp=mean(lifeExp)) %>%
->    arrange(desc(mean_lifeExp))
->```
 
 ## Other great resources
 [Data Wrangling Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
