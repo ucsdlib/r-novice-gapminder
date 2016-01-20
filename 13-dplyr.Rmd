@@ -19,6 +19,13 @@ gapminder <- read.csv("data/gapminder-FiveYearData.csv", header=TRUE)
 
 Manipulation of dataframes means many things to many researchers, we often select certain observations (rows) or variables (columns), we often group the data by a certain variable(s), or we even calculate summary statistics. We can do these operations using the normal base R operations:
 
+```{r eval=FALSE}
+#setwd('~/workshops/r-novice-gapminder/')
+gapminder <- read.csv("https://goo.gl/BtBnPg", header = T)
+gapminder <- read.csv("data/gapminder-FiveYearData.csv", header = T)
+```
+
+
 ```{r}
 mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
 mean(gapminder[gapminder$continent == "Americas", "gdpPercap"])
@@ -68,6 +75,20 @@ year_country_gdp <- gapminder %>% select(year,country,gdpPercap)
 ```
 
 To help you understand why we wrote that in that way, let's walk through it step by step. First we summon the gapminder dataframe and pass it on, using the pipe symbol `%>%`, to the next step, which is the `select()` function. In this case we don't specify which data object we use in the `select()` function since in gets that from the previous pipe. **Fun Fact**: There is a good chance you have encountered pipes before in the shell. In R, a pipe symbol is `%>%` while in the shell it is `|` but the concept is the same!
+
+`%>%` operator shortcut:  Ctrl+Shift+M (win) & Cmd+Shift+M (mac)
+
+Other helpful shortcuts: 
+
+Operation            | Windows      | Mac         | 
+---------------------|--------------|-------------|
+Insert pipe operator | Ctrl+Shift+M	| Cmd+Shift+M |
+Insert assignment operator | 	Alt+-	| Option+-    |
+Move cursor to Console | 	Ctrl+2    |	Ctrl+2      |
+Clear console	       | Ctrl+L       |	Ctrl+L      |
+Show help for function at cursor | 	F1 |	F1      |
+
+See the full [list of shortcuts](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts) in RStudio.
 
 ## Using filter()
 
